@@ -3,12 +3,106 @@
     <title>blog</title>
     <link href="https://ssht428.github.io/blog/feed.xml" rel="self" />
     <link href="https://ssht428.github.io/blog" />
-    <updated>2021-12-16T13:31:36+08:00</updated>
+    <updated>2021-12-16T14:00:02+08:00</updated>
     <author>
         <name>sun</name>
     </author>
     <id>https://ssht428.github.io/blog</id>
 
+    <entry>
+        <title>IVFPQ Relayout优化原理</title>
+        <author>
+            <name>sun</name>
+        </author>
+        <link href="https://ssht428.github.io/blog/ivfpq-relayoutyou-hua-yuan-li.html"/>
+        <id>https://ssht428.github.io/blog/ivfpq-relayoutyou-hua-yuan-li.html</id>
+
+        <updated>2021-12-16T14:00:02+08:00</updated>
+            <summary>
+                <![CDATA[
+                     在《IVFPQ算法原理》中，我们已经得知，IVFPQ算法的核心是一个查表并累加的过程： 其中M是PQ算法压缩后的维度，比如64。T是一个拥有M*ksub个项的数组，逻辑上也可以看作一个二维数组，因此称为“表”。ksub是每个子空间中的聚类个数，常用的数值为256，这样可以使得code可以恰好用一个字节表示。 为了更加直观，我们可以把这个公式展开，即： dis0=coarse_dis+T0,code0,0+T1,code0,1+T2,code0,2+...+T64,code0,63 dis1=coarse_dis+T0,code1,0+T1,code1,1+T2,code1,2+...+T64,code1,63 dis2=coarse_dis+T0,code2,0+T1,code2,1+T2,code2,2+...+T64,code2,63 dis3=coarse_dis+T0,code3,0+T1,code3,1+T2,code3,2+...+T64,code3,63 在计算机中，T是一个连续数组，所以Tm,c对应的就是T[m * ksub + c]。而code数组是各个y的code连续存放的，codei,m就是code[i * M + m]。这里，二维数组采用了行优先的存储方式（读者可以自行证明在PQ的查表过程中列优先存储性能会更加糟糕）。在d=128，PQ64，ksub=256的情况下，执行的算法的伪代码如下： dis[0] = coarse_dis + T[0 * 256 + code[0]] + T[1 * 256 + code[1]] + T[2 * 256 + code[2]] + ... + T[63 * 256 +&hellip;
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                <div class="entry-content">
+<p>在《<a href="file:///H:/Learn/web/zhou-yuxin.github.io-master/articles/2020/IVFPQ算法原理/index.html">IVFPQ算法原理</a>》中，我们已经得知，IVFPQ算法的核心是一个查表并累加的过程：</p>
+<p><img loading="lazy" src="file:///H:/Learn/web/zhou-yuxin.github.io-master/articles/2020/IVFPQ%20Relayout%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86/1.png" data-is-external-image="true" ></p>
+<p>其中M是PQ算法压缩后的维度，比如64。T是一个拥有M*ksub个项的数组，逻辑上也可以看作一个二维数组，因此称为“表”。ksub是每个子空间中的聚类个数，常用的数值为256，这样可以使得code可以恰好用一个字节表示。</p>
+<p>为了更加直观，我们可以把这个公式展开，即：</p>
+<p>dis<sub>0</sub>=coarse_dis+T<sub>0,code0,0</sub>+T<sub>1,code0,1</sub>+T<sub>2,code0,2</sub>+...+T<sub>64,code0,63</sub></p>
+<p>dis<sub>1</sub>=coarse_dis+T<sub>0,code1,0</sub>+T<sub>1,code1,1</sub>+T<sub>2,code1,2</sub>+...+T<sub>64,code1,63</sub></p>
+<p>dis<sub>2</sub>=coarse_dis+T<sub>0,code2,0</sub>+T<sub>1,code2,1</sub>+T<sub>2,code2,2</sub>+...+T<sub>64,code2,63</sub></p>
+<p>dis<sub>3</sub>=coarse_dis+T<sub>0,code3,0</sub>+T<sub>1,code3,1</sub>+T<sub>2,code3,2</sub>+...+T<sub>64,code3,63</sub></p>
+<p>在计算机中，T是一个连续数组，所以T<sub>m,c</sub>对应的就是T[m * ksub + c]。而code数组是各个y的code连续存放的，code<sub>i,m</sub>就是code[i * M + m]。这里，二维数组采用了行优先的存储方式（读者可以自行证明在PQ的查表过程中列优先存储性能会更加糟糕）。在d=128，PQ64，ksub=256的情况下，执行的算法的伪代码如下：</p>
+<pre>dis[0] = coarse_dis + T[0 * 256 + code[0]] + T[1 * 256 + code[1]] + T[2 * 256 + code[2]] + ... + T[63 * 256 + code[63]]
+dis[1] = coarse_dis + T[0 * 256 + code[64]] + T[1 * 256 + code[65]] + T[2 * 256 + code[66]] + ... + T[63 * 256 + code[127]]
+dis[2] = coarse_dis + T[0 * 256 + code[128]] + T[1 * 256 + code[129]] + T[2 * 256 + code[130]] + ... + T[63 * 256 + code[191]]
+dis[3] = coarse_dis + T[0 * 256 + code[192]] + T[1 * 256 + code[193]] + T[2 * 256 + code[194]] + ... + T[63 * 256 + code[255]]
+...
+</pre>
+<p>不难发现，计算各个距离的过程中，对于code数组的访问是顺序的，但是对于T的访问是非常跳跃的。</p>
+<p>我希望能够以打包成组的方式计算距离。以组大小为4为例，首先把4个dis都初始化为coarse_dis：</p>
+<pre>dis[0] = coarse_dis
+dis[1] = coarse_dis
+dis[2] = coarse_dis
+dis[3] = coarse_dis
+</pre>
+<p>然后把这四个距离各自累加一项：</p>
+<pre>dis[0] += T[0 * 256 + code[0]]
+dis[1] += T[0 * 256 + code[1]]
+dis[2] += T[0 * 256 + code[2]]
+dis[3] += T[0 * 256 + code[3]]
+</pre>
+<p>然后再把这四个距离各自累加一项：</p>
+<pre>dis[0] += T[1 * 256 + code[4]]
+dis[1] += T[1 * 256 + code[5]]
+dis[2] += T[1 * 256 + code[6]]
+dis[3] += T[1 * 256 + code[7]]
+</pre>
+<p>然后再把这四个距离各自累加一项：</p>
+<pre>dis[0] += T[2 * 256 + code[8]]
+dis[1] += T[2 * 256 + code[9]]
+dis[2] += T[2 * 256 + code[10]]
+dis[3] += T[2 * 256 + code[11]]
+</pre>
+<p>如此累加64次，即64个子空间，就得到了4个距离。这样的访问过程中，code数组依然是顺序访问的，而T的访问局部性则得到了改善，由此可以提高cache命中率，提高性能。</p>
+<p>但是，仔细看，发现这样操作改变了dis的数学表达式！本来dis的表达式为：</p>
+<pre>dis[0] = coarse_dis + T[0 * 256 + code[<span style="color: red;">0</span>]] + T[1 * 256 + code[<span style="color: red;">1</span>]] + T[2 * 256 + code[<span style="color: red;">2</span>]] + ... + T[63 * 256 + code[<span style="color: red;">63</span>]]
+dis[1] = coarse_dis + T[0 * 256 + code[<span style="color: red;">64</span>]] + T[1 * 256 + code[<span style="color: red;">65</span>]] + T[2 * 256 + code[<span style="color: red;">66</span>]] + ... + T[63 * 256 + code[<span style="color: red;">127</span>]]
+dis[2] = coarse_dis + T[0 * 256 + code[<span style="color: red;">128</span>]] + T[1 * 256 + code[<span style="color: red;">129</span>]] + T[2 * 256 + code[<span style="color: red;">130</span>]] + ... + T[63 * 256 + code[<span style="color: red;">191</span>]]
+dis[3] = coarse_dis + T[0 * 256 + code[<span style="color: red;">192</span>]] + T[1 * 256 + code[<span style="color: red;">193</span>]] + T[2 * 256 + code[<span style="color: red;">194</span>]] + ... + T[63 * 256 + code[<span style="color: red;">255</span>]]
+...
+</pre>
+<p>现在却变成了：</p>
+<pre>dis[0] = coarse_dis + T[0 * 256 + code[<span style="color: red;">0</span>]] + T[1 * 256 + code[<span style="color: red;">4</span>]] + T[2 * 256 + code[<span style="color: red;">8</span>]] + ... + T[63 * 256 + code[<span style="color: red;">252</span>]]
+dis[1] = coarse_dis + T[0 * 256 + code[<span style="color: red;">1</span>]] + T[1 * 256 + code[<span style="color: red;">5</span>]] + T[2 * 256 + code[<span style="color: red;">9</span>]] + ... + T[63 * 256 + code[<span style="color: red;">253</span>]]
+dis[2] = coarse_dis + T[0 * 256 + code[<span style="color: red;">2</span>]] + T[1 * 256 + code[<span style="color: red;">6</span>]] + T[2 * 256 + code[<span style="color: red;">10</span>]] + ... + T[63 * 256 + code[<span style="color: red;">254</span>]]
+dis[3] = coarse_dis + T[0 * 256 + code[<span style="color: red;">3</span>]] + T[1 * 256 + code[<span style="color: red;">7</span>]] + T[2 * 256 + code[<span style="color: red;">11</span>]] + ... + T[63 * 256 + code[<span style="color: red;">255</span>]]
+...
+</pre>
+<p>换言之，如果既要保持code顺序访问，又要让T尽可能顺序访问，那么就不得不改变code的布局，比如把原来的code[64]迁移到现在的code[1]，把原来的code[130]迁移到现在的code[10]等等。这就是需要relayout的根本原因！</p>
+<p>relayout的代码如下：</p>
+<p><img loading="lazy" src="file:///H:/Learn/web/zhou-yuxin.github.io-master/articles/2020/IVFPQ%20Relayout%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86/2.png" data-is-external-image="true" ></p>
+<p>仔细看还是很简单的，核心即为src指针每次向后挪动一项，而dst则要挪动group_size项。</p>
+<p>之后的查表累加过程也是教科书般的实现：</p>
+<p><img loading="lazy" src="file:///H:/Learn/web/zhou-yuxin.github.io-master/articles/2020/IVFPQ%20Relayout%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86/3.png" data-is-external-image="true" ></p>
+<p>其中的this-&gt;dis0就是公式中的coarse_dis，this-&gt;sim_tab就是公式中的T。</p>
+<p>至此整个IVFPQ Relayout的原理与实现都结束啦！但是，如果你觉得这就是尽头了，那么真是太小瞧我的“榨机（压榨计算机）”能力了。除了上面的查表实现外，我还实现了一个几乎完全一样的函数，除了把group_size从函数的参数改为了模板参数：</p>
+<p><img loading="lazy" src="file:///H:/Learn/web/zhou-yuxin.github.io-master/articles/2020/IVFPQ%20Relayout%E4%BC%98%E5%8C%96%E5%8E%9F%E7%90%86/4.png" data-is-external-image="true" ></p>
+<p>对于一些常用的group_size，比如4、8，可以直接调用该模板的特化函数scan_list_with_table&lt;4&gt;、scan_list_with_table&lt;8&gt;等等。这样可以充分利用编译器的向量化优化。比如代码（假设GroupSize=4）中</p>
+<pre>for (size_t i = 0; i &lt; 4; i++) {
+    dis_array[i] = this-&gt;dis0;
+}
+</pre>
+<p>会被编译器优化为一条SSE指令：</p>
+<pre>_mm_set_ps (mdis, this-&gt;dis0);
+</pre>
+<p>于是Relayout在提高了cache命中率的同时，还使能了编译器的向量化优化！</p>
+</div>
+            ]]>
+        </content>
+    </entry>
     <entry>
         <title>Frontpage Configuration</title>
         <author>
