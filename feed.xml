@@ -3,7 +3,7 @@
     <title>blog</title>
     <link href="https://ssht428.github.io/blog/feed.xml" rel="self" />
     <link href="https://ssht428.github.io/blog" />
-    <updated>2021-12-16T14:00:02+08:00</updated>
+    <updated>2021-12-16T14:02:39+08:00</updated>
     <author>
         <name>sun</name>
     </author>
@@ -17,7 +17,7 @@
         <link href="https://ssht428.github.io/blog/ivfpq-relayoutyou-hua-yuan-li.html"/>
         <id>https://ssht428.github.io/blog/ivfpq-relayoutyou-hua-yuan-li.html</id>
 
-        <updated>2021-12-16T14:00:02+08:00</updated>
+        <updated>2021-12-16T14:02:39+08:00</updated>
             <summary>
                 <![CDATA[
                      在《IVFPQ算法原理》中，我们已经得知，IVFPQ算法的核心是一个查表并累加的过程： 其中M是PQ算法压缩后的维度，比如64。T是一个拥有M*ksub个项的数组，逻辑上也可以看作一个二维数组，因此称为“表”。ksub是每个子空间中的聚类个数，常用的数值为256，这样可以使得code可以恰好用一个字节表示。 为了更加直观，我们可以把这个公式展开，即： dis0=coarse_dis+T0,code0,0+T1,code0,1+T2,code0,2+...+T64,code0,63 dis1=coarse_dis+T0,code1,0+T1,code1,1+T2,code1,2+...+T64,code1,63 dis2=coarse_dis+T0,code2,0+T1,code2,1+T2,code2,2+...+T64,code2,63 dis3=coarse_dis+T0,code3,0+T1,code3,1+T2,code3,2+...+T64,code3,63 在计算机中，T是一个连续数组，所以Tm,c对应的就是T[m * ksub + c]。而code数组是各个y的code连续存放的，codei,m就是code[i * M + m]。这里，二维数组采用了行优先的存储方式（读者可以自行证明在PQ的查表过程中列优先存储性能会更加糟糕）。在d=128，PQ64，ksub=256的情况下，执行的算法的伪代码如下： dis[0] = coarse_dis + T[0 * 256 + code[0]] + T[1 * 256 + code[1]] + T[2 * 256 + code[2]] + ... + T[63 * 256 +&hellip;

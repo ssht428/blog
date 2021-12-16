@@ -1,3 +1,2 @@
 User-agent: *
 Disallow:
-Sitemap: https://ssht428.github.io/blog/sitemap.xml
