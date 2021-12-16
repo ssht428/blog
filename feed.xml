@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <title>ssht428.github.io</title>
-    <link href="https://ssht428.github.io/ssht428.github.io/feed.xml" rel="self" />
-    <link href="https://ssht428.github.io/ssht428.github.io" />
+    <title>blog</title>
+    <link href="https://ssht428.github.io/blog/feed.xml" rel="self" />
+    <link href="https://ssht428.github.io/blog" />
     <updated>2021-12-16T13:31:36+08:00</updated>
     <author>
         <name>sun</name>
     </author>
-    <id>https://ssht428.github.io/ssht428.github.io</id>
+    <id>https://ssht428.github.io/blog</id>
 
     <entry>
         <title>Frontpage Configuration</title>
         <author>
             <name>sun</name>
         </author>
-        <link href="https://ssht428.github.io/ssht428.github.io/frontpage-configuration.html"/>
-        <id>https://ssht428.github.io/ssht428.github.io/frontpage-configuration.html</id>
+        <link href="https://ssht428.github.io/blog/frontpage-configuration.html"/>
+        <id>https://ssht428.github.io/blog/frontpage-configuration.html</id>
 
         <updated>2021-12-16T13:31:36+08:00</updated>
             <summary>
@@ -43,8 +43,8 @@
         <author>
             <name>sun</name>
         </author>
-        <link href="https://ssht428.github.io/ssht428.github.io/welcome-to-mine-blog.html"/>
-        <id>https://ssht428.github.io/ssht428.github.io/welcome-to-mine-blog.html</id>
+        <link href="https://ssht428.github.io/blog/welcome-to-mine-blog.html"/>
+        <id>https://ssht428.github.io/blog/welcome-to-mine-blog.html</id>
 
         <updated>2021-12-16T13:24:28+08:00</updated>
             <summary>
